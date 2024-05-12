@@ -1,15 +1,13 @@
-import pandas as pd
 import pickle
 import numpy as np
+import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
 
 app = Flask(__name__)
 CORS(app)
 
-
-# Load your LG_model2
+# Load your LG_model2 only once
 with open('LG_model2.pkl', 'rb') as model_file:
     LG_model2 = pickle.load(model_file)
 
@@ -27,12 +25,9 @@ def predict():
     mileage = data['Mileage']
     vehicle_age = data['vehicle_age']
 
-    # Convert input data to a DataFrame
-    input_df = pd.DataFrame([[vehicle_type, options, mileage, vehicle_age]],
-                            columns=['Type', 'Options', 'Mileage', 'vehicle_age'])
-
     # Process the data using your LG_model2
-    prediction = LG_model2.predict(input_df)
+    prediction = LG_model2.predict(pd.DataFrame([[vehicle_type, options, mileage, vehicle_age]],
+                                                columns=['Type', 'Options', 'Mileage', 'vehicle_age']))
 
     # Round the prediction value to the nearest integer
     rounded_prediction = np.round(prediction)  # Rounding using NumPy
